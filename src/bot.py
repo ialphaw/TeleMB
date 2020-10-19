@@ -4,6 +4,7 @@ from flask import Flask, request
 import os
 
 
+# server stuffs
 def init_and_start_bot():
     bot = telebot.TeleBot(TOKEN, threaded=False)
     server = Flask(__name__)
@@ -20,6 +21,9 @@ def init_and_start_bot():
         bot.set_webhook(url=endpoint + TOKEN)
         return "!", 200
 
+    # -----------------------------------------------------------------------------
+
+    # /start command
     @bot.message_handler(commands=['start'])
     def start_command(message):
         bot.send_message(message.chat.id, 'THE BOT IS ONLINE!')

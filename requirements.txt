@@ -1,2 +1,4 @@
-pyTelegramBotAPI==3.7.1
+pyTelegramBotAPI==3.7.3
+python-telegram-bot==13.0
 Flask==1.1.2
+schedule==0.6.0

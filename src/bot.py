@@ -32,11 +32,28 @@ def init_and_start_bot():
     # /start command
     @bot.message_handler(commands=['start'])
     def start_command(message):
-        bot.send_message(message.chat.id, 'THE BOT IS ONLINE!')
+        global chat_id
+        f = False
+
+        # find out if bot is admin or not
+        admins = bot.get_chat_administrators(message.chat.id)
+        for admin in admins:
+            if admin.user.username == 'TeleMBTest_bot':
+                f = True
+
+        if f:
+            chat_id = message.chat.id
+            bot.send_message(message.chat.id, "The Bot Is Online")
+        else:
+            bot.send_message(message.chat.id, "Please Make The Bot Admin And Send /start Again")
+
+    # -----------------------------------------------------------------------------
 
     # delete messages that include link
     @bot.message_handler(
-        regexp="(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})")
+        regexp="(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]["
+               "a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,"
+               "}|www\.[a-zA-Z0-9]+\.[^\s]{2,})")
     def handle_message(message):
         bot.delete_message(message.chat.id, message.message_id)
 

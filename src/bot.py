@@ -1,7 +1,13 @@
-import telebot
-from src.config import TOKEN, endpoint, herokuapi
-from flask import Flask, request
 import os
+from threading import Thread
+from time import sleep
+import schedule
+
+import telebot
+from flask import Flask, request
+from telegram import ChatPermissions
+
+from src.config import TOKEN, endpoint
 
 
 # server stuffs
@@ -27,5 +33,13 @@ def init_and_start_bot():
     @bot.message_handler(commands=['start'])
     def start_command(message):
         bot.send_message(message.chat.id, 'THE BOT IS ONLINE!')
+
+    # delete messages that include link
+    @bot.message_handler(
+        regexp="(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]["
+               "a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,"
+               "}|www\.[a-zA-Z0-9]+\.[^\s]{2,})")
+    def handle_message(message):
+        bot.delete_message(message.chat.id, message.message_id)
 
     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))

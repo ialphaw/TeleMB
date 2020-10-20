@@ -57,4 +57,23 @@ def init_and_start_bot():
     def handle_message(message):
         bot.delete_message(message.chat.id, message.message_id)
 
+    # -----------------------------------------------------------------------------
+
+    # if you are admin, you can restrict all members
+    @bot.message_handler(commands=['mute'])
+    def mute(message):
+        f = False
+        admins = bot.get_chat_administrators(message.chat.id)
+        for admin in admins:
+            if admin.user.id == message.from_user.id:
+                f = True
+
+        if f:
+            bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=False))
+            bot.send_message(message.chat.id, f"The Group Has Been Silenced By {message.from_user.username}")
+        else:
+            bot.reply_to(message, "Sorry, But You're Not Admin!")
+
+    # -----------------------------------------------------------------------------
+
     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))

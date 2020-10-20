@@ -76,4 +76,12 @@ def init_and_start_bot():
 
     # -----------------------------------------------------------------------------
 
+    # if you are admin, you can un-restrict all members
+    @bot.message_handler(commands=['un_mute'])
+    def un_mute(message):
+        bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=True))
+        bot.send_message(message.chat.id, f"The Group Has Been Un-Silenced By {message.from_user.username}")
+
+    # -----------------------------------------------------------------------------
+
     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))

@@ -38,7 +38,7 @@ def init_and_start_bot():
         # find out if bot is admin or not
         admins = bot.get_chat_administrators(message.chat.id)
         for admin in admins:
-            if admin.user.username == 'TeleMBTest_bot':
+            if admin.user.username == 'TeleMB_bot':
                 f = True
 
         if f:

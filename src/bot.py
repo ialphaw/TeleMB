@@ -96,4 +96,16 @@ def init_and_start_bot():
 
     # -----------------------------------------------------------------------------
 
+    # delete leave messages
+    @bot.message_handler(content_types=['left_chat_member'])
+    def delete_leave_message(message):
+        username = message.left_chat_member.username
+        try:
+            bot.delete_message(message.chat.id, message.message_id)
+            bot.send_message(message.chat.id, f'@{username} Left :(')
+        except:
+            pass
+
+    # -----------------------------------------------------------------------------
+
     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))

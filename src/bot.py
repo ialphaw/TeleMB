@@ -70,7 +70,7 @@ def init_and_start_bot():
 
         if f:
             bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=False))
-            bot.send_message(message.chat.id, f"The Group Has Been Silenced By {message.from_user.username}")
+            bot.send_message(message.chat.id, f"The Group Has Been Silenced By @{message.from_user.username}")
         else:
             bot.reply_to(message, "Sorry, But You're Not Admin!")
 
@@ -80,7 +80,19 @@ def init_and_start_bot():
     @bot.message_handler(commands=['un_mute'])
     def un_mute(message):
         bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=True))
-        bot.send_message(message.chat.id, f"The Group Has Been Un-Silenced By {message.from_user.username}")
+        bot.send_message(message.chat.id, f"The Group Has Been Un-Silenced By @{message.from_user.username}")
+
+    # -----------------------------------------------------------------------------
+
+    # delete joined messages and leave messages
+    @bot.message_handler(content_types=["new_chat_members"])
+    def delete_join_message(message):
+        username = message.new_chat_members[0].username
+        try:
+            bot.delete_message(message.chat.id, message.message_id)
+            bot.send_message(message.chat.id, f'Welcome @{username} :)')
+        except:
+            pass
 
     # -----------------------------------------------------------------------------
 

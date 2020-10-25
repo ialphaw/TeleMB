@@ -137,6 +137,31 @@ def init_and_start_bot():
     def help_command(message):
         bot.send_message(message.chat.id, wlc_msg)
 
+        # -----------------------------------------------------------------------------
+
+        # kick a member by replying /kick to a message
+        @bot.message_handler(commands=['kick'])
+        def un_mute(message):
+            if is_start(info, message.chat.id):
+                f = False
+                admins = bot.get_chat_administrators(message.chat.id)
+                for admin in admins:
+                    if admin.user.id == message.from_user.id:
+                        f = True
+
+                if f:
+                    try:
+                        kick_user = message.reply_to_message.from_user
+                        bot.kick_chat_member(message.reply_to_message.chat.id, kick_user.id)
+                        bot.send_message(message.chat.id,
+                                         f'@{kick_user.username} Kicked By @{message.from_user.username}')
+                    except:
+                        bot.reply_to(message, "Something Went Wrong")
+                else:
+                    bot.reply_to(message, "Sorry, But You're Not Admin!")
+            else:
+                bot.send_message(message.chat.id, 'Please Start The Bot First')
+
     # -----------------------------------------------------------------------------
 
     # mute the groups at 9:30 PM Teh

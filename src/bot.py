@@ -1,8 +1,8 @@
 import os
 from threading import Thread
 from time import sleep
-import schedule
 
+import schedule
 import telebot
 from flask import Flask, request
 from telegram import ChatPermissions
@@ -64,56 +64,71 @@ def init_and_start_bot():
                "a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,"
                "}|www\.[a-zA-Z0-9]+\.[^\s]{2,})")
     def handle_message(message):
-        bot.delete_message(message.chat.id, message.message_id)
+        if is_start(info, message.chat.id):
+            bot.delete_message(message.chat.id, message.message_id)
+        else:
+            bot.send_message(message.chat.id, 'Please Start The Bot First')
 
     # -----------------------------------------------------------------------------
 
     # if you are admin, you can restrict all members
     @bot.message_handler(commands=['mute'])
     def mute(message):
-        f = False
-        admins = bot.get_chat_administrators(message.chat.id)
-        for admin in admins:
-            if admin.user.id == message.from_user.id:
-                f = True
+        if is_start(info, message.chat.id):
+            f = False
+            admins = bot.get_chat_administrators(message.chat.id)
+            for admin in admins:
+                if admin.user.id == message.from_user.id:
+                    f = True
 
-        if f:
-            bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=False))
-            bot.send_message(message.chat.id, f"The Group Has Been Silenced By @{message.from_user.username}")
+            if f:
+                bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=False))
+                bot.send_message(message.chat.id, f"The Group Has Been Silenced By {message.from_user.username}")
+            else:
+                bot.reply_to(message, "Sorry, But You're Not Admin!")
         else:
-            bot.reply_to(message, "Sorry, But You're Not Admin!")
+            bot.send_message(message.chat.id, 'Please Start The Bot First')
 
     # -----------------------------------------------------------------------------
 
     # if you are admin, you can un-restrict all members
     @bot.message_handler(commands=['un_mute'])
     def un_mute(message):
-        bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=True))
-        bot.send_message(message.chat.id, f"The Group Has Been Un-Silenced By @{message.from_user.username}")
+        if is_start(info, message.chat.id):
+            bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=True))
+            bot.send_message(message.chat.id, f"The Group Has Been Un-Silenced By {message.from_user.username}")
+        else:
+            bot.send_message(message.chat.id, 'Please Start The Bot First')
 
     # -----------------------------------------------------------------------------
 
     # delete joined messages and leave messages
     @bot.message_handler(content_types=["new_chat_members"])
     def delete_join_message(message):
-        username = message.new_chat_members[0].username
-        try:
-            bot.delete_message(message.chat.id, message.message_id)
-            bot.send_message(message.chat.id, f'Welcome @{username} :)')
-        except:
-            pass
+        if is_start(info, message.chat.id):
+            username = message.new_chat_members[0].username
+            try:
+                bot.delete_message(message.chat.id, message.message_id)
+                bot.send_message(message.chat.id, f'Welcome @{username} :)')
+            except:
+                pass
+        else:
+            bot.send_message(message.chat.id, 'Please Start The Bot First')
 
     # -----------------------------------------------------------------------------
 
     # delete leave messages
     @bot.message_handler(content_types=['left_chat_member'])
     def delete_leave_message(message):
-        username = message.left_chat_member.username
-        try:
-            bot.delete_message(message.chat.id, message.message_id)
-            bot.send_message(message.chat.id, f'@{username} Left :(')
-        except:
-            pass
+        if is_start(info, message.chat.id):
+            username = message.left_chat_member.username
+            try:
+                bot.delete_message(message.chat.id, message.message_id)
+                bot.send_message(message.chat.id, f'@{username} Left :(')
+            except:
+                pass
+        else:
+            bot.send_message(message.chat.id, 'Please Start The Bot First')
 
     # -----------------------------------------------------------------------------
 

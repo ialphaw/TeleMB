@@ -124,4 +124,33 @@ def init_and_start_bot():
 
     # -----------------------------------------------------------------------------
 
+    # mute the groups at 9:30 PM Teh
+    def schedule_mute():
+        for group in info:
+            if is_start(info, group['chat_id']):
+                bot.set_chat_permissions(group['chat_id'], ChatPermissions(can_send_messages=False))
+                bot.send_message(group['chat_id'], 'Group Will Be Muted Till 8:30 AM')
+
+    # ----------------------------------------------------------------------
+
+    # mute the groups at 8:30 AM Teh
+    def schedule_un_mute():
+        for group in info:
+            if is_start(info, group['chat_id']):
+                bot.set_chat_permissions(group['chat_id'], ChatPermissions(can_send_messages=True))
+                bot.send_message(group['chat_id'], 'Group Will Be Opened Till 9:30 PM')
+
+    # ----------------------------------------------------------------------
+
+    def schedule_checker():
+        while True:
+            schedule.run_pending()
+            sleep(1)
+
+    schedule.every().day.at("18:00").do(schedule_mute)
+    schedule.every().day.at("05:00").do(schedule_un_mute)
+    Thread(target=schedule_checker).start()
+
+    # ----------------------------------------------------------------------
+
     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))

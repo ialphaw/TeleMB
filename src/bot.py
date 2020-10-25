@@ -42,7 +42,7 @@ def init_and_start_bot():
             # find out if bot is admin or not
             admins = bot.get_chat_administrators(message.chat.id)
             for admin in admins:
-                if admin.user.username == 'TeleMBTest_bot':
+                if admin.user.username == 'TeleMB_bot':
                     f = True
 
             if f:
@@ -52,7 +52,7 @@ def init_and_start_bot():
                 print(info)
                 bot.send_message(message.chat.id, "The Bot Is Online")
             else:
-                bot.send_message(message.chat.id, "Please Make The Bot Admin And Send /start Againn")
+                bot.send_message(message.chat.id, "Please Make The Bot Admin And Send /start Again")
         else:
             bot.reply_to(message, "The Bot Is Already Started")
 

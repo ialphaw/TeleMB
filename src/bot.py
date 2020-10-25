@@ -12,6 +12,7 @@ from src.utils import is_start
 
 info = []
 
+is_kicked = False
 
 # server stuffs
 def init_and_start_bot():
@@ -120,15 +121,19 @@ def init_and_start_bot():
     # delete leave messages
     @bot.message_handler(content_types=['left_chat_member'])
     def delete_leave_message(message):
-        if is_start(info, message.chat.id):
-            username = message.left_chat_member.username
-            try:
-                bot.delete_message(message.chat.id, message.message_id)
-                bot.send_message(message.chat.id, f'@{username} Left :(')
-            except:
-                pass
+        global is_kicked
+        if not is_kicked:
+            if is_start(info, message.chat.id):
+                username = message.left_chat_member.username
+                try:
+                    bot.delete_message(message.chat.id, message.message_id)
+                    bot.send_message(message.chat.id, f'@{username} Left :(')
+                except:
+                    pass
+            else:
+                bot.send_message(message.chat.id, 'Please Start The Bot First')
         else:
-            bot.send_message(message.chat.id, 'Please Start The Bot First')
+            is_kicked = False
 
     # -----------------------------------------------------------------------------
 
@@ -142,6 +147,7 @@ def init_and_start_bot():
     # kick a member by replying /kick to a message
     @bot.message_handler(commands=['kick'])
     def un_mute(message):
+        global is_kicked
         if is_start(info, message.chat.id):
             f = False
             admins = bot.get_chat_administrators(message.chat.id)
@@ -152,6 +158,7 @@ def init_and_start_bot():
             if f:
                 try:
                     kick_user = message.reply_to_message.from_user
+                    is_kicked = True
                     bot.kick_chat_member(message.reply_to_message.chat.id, kick_user.id)
                     bot.send_message(message.chat.id,
                                      f'@{kick_user.username} Kicked By @{message.from_user.username}')

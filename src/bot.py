@@ -47,8 +47,8 @@ def init_and_start_bot():
                     f = True
 
             if f:
-                chat_id = message.chat.id
-                info.append({'chat_id': chat_id})
+                info.append({'chat_title': message.chat.title})
+                info[-1]['chat_id'] = message.chat.id
                 info[-1]['start'] = True
                 print(info)
                 bot.send_message(message.chat.id, "The Bot Is Online")

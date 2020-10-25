@@ -8,6 +8,9 @@ from flask import Flask, request
 from telegram import ChatPermissions
 
 from src.config import TOKEN, endpoint, wlc_msg
+from src.utils import is_start
+
+info = []
 
 
 # server stuffs
@@ -32,20 +35,26 @@ def init_and_start_bot():
     # /start command
     @bot.message_handler(commands=['start'])
     def start_command(message):
-        global chat_id
-        f = False
+        # check if bot isn't already started
+        if not (is_start(info, message.chat.id)):
+            f = False
 
-        # find out if bot is admin or not
-        admins = bot.get_chat_administrators(message.chat.id)
-        for admin in admins:
-            if admin.user.username == 'TeleMB_bot':
-                f = True
+            # find out if bot is admin or not
+            admins = bot.get_chat_administrators(message.chat.id)
+            for admin in admins:
+                if admin.user.username == 'TeleMBTest_bot':
+                    f = True
 
-        if f:
-            chat_id = message.chat.id
-            bot.send_message(message.chat.id, "The Bot Is Online")
+            if f:
+                chat_id = message.chat.id
+                info.append({'chat_id': chat_id})
+                info[-1]['start'] = True
+                print(info)
+                bot.send_message(message.chat.id, "The Bot Is Online")
+            else:
+                bot.send_message(message.chat.id, "Please Make The Bot Admin And Send /start Againn")
         else:
-            bot.send_message(message.chat.id, "Please Make The Bot Admin And Send /start Again")
+            bot.reply_to(message, "The Bot Is Already Started")
 
     # -----------------------------------------------------------------------------
 

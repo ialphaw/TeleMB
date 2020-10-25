@@ -7,7 +7,7 @@ import telebot
 from flask import Flask, request
 from telegram import ChatPermissions
 
-from src.config import TOKEN, endpoint
+from src.config import TOKEN, endpoint, wlc_msg
 
 
 # server stuffs
@@ -105,6 +105,13 @@ def init_and_start_bot():
             bot.send_message(message.chat.id, f'@{username} Left :(')
         except:
             pass
+
+    # -----------------------------------------------------------------------------
+
+    # show a help message
+    @bot.message_handler(commands=['help'])
+    def help_command(message):
+        bot.send_message(message.chat.id, wlc_msg)
 
     # -----------------------------------------------------------------------------
 

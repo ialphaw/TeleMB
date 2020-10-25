@@ -66,7 +66,14 @@ def init_and_start_bot():
                "}|www\.[a-zA-Z0-9]+\.[^\s]{2,})")
     def handle_message(message):
         if is_start(info, message.chat.id):
-            bot.delete_message(message.chat.id, message.message_id)
+            f = False
+            admins = bot.get_chat_administrators(message.chat.id)
+            for admin in admins:
+                if admin.user.id == message.from_user.id:
+                    f = True
+
+            if not f:
+                bot.delete_message(message.chat.id, message.message_id)
         else:
             bot.send_message(message.chat.id, 'Please Start The Bot First')
 

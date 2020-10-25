@@ -5,3 +5,4 @@ wlc_msg = '\nWelcome to @TeleMB_test.\nCommands available:\n/mute - mute the gro
           'group\n/kick you reply this on someone\'s message and bot will remove it\nthis bot automatically delete ' \
           'messages contains link and delete invite and left messages in the ' \
           'group\nthis bot also mute and un_mute the groups at a specific time '
+creators_id = [1245192764]

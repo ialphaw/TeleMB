@@ -7,10 +7,10 @@ import telebot
 from flask import Flask, request
 from telegram import ChatPermissions
 
-from src.config import TOKEN, endpoint, wlc_msg
-from src.utils import is_start
+from src.config import TOKEN, endpoint, wlc_msg, creators_id
+from src.utils import is_start, read_info, write_info
 
-info = []
+info = read_info()
 
 is_kicked = False
 
@@ -50,7 +50,7 @@ def init_and_start_bot():
                 info.append({'chat_title': message.chat.title})
                 info[-1]['chat_id'] = message.chat.id
                 info[-1]['start'] = True
-                print(info)
+                write_info(info)
                 bot.send_message(message.chat.id, "The Bot Is Online")
             else:
                 bot.send_message(message.chat.id, "Please Make The Bot Admin And Send /start Again")
@@ -146,7 +146,7 @@ def init_and_start_bot():
 
     # kick a member by replying /kick to a message
     @bot.message_handler(commands=['kick'])
-    def un_mute(message):
+    def kick(message):
         global is_kicked
         if is_start(info, message.chat.id):
             f = False
@@ -168,6 +168,21 @@ def init_and_start_bot():
                 bot.reply_to(message, "Sorry, But You're Not Admin!")
         else:
             bot.send_message(message.chat.id, 'Please Start The Bot First')
+
+    # -----------------------------------------------------------------------------
+
+    # sends info to the creator only :)
+    @bot.message_handler(commands=['send_info'])
+    def send_info(message):
+        user_id = message.from_user.id
+        if user_id in creators_id:
+            doc = open('info.txt', 'rb')
+            try:
+                bot.send_document(message.chat.id, doc)
+            except:
+                pass
+        else:
+            bot.reply_to(message, 'You Have Not Access To This Command')
 
     # -----------------------------------------------------------------------------
 

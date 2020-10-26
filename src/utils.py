@@ -21,3 +21,9 @@ def write_info(info):
     file = open('info.txt', 'w')
     file.write(str(info))
     print(info)
+
+
+def index_finder(info, chat_id):
+    for group in info:
+        if chat_id == group['chat_id']:
+            return info.index(group)

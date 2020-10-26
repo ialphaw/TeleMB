@@ -8,11 +8,12 @@ from flask import Flask, request
 from telegram import ChatPermissions
 
 from src.config import TOKEN, endpoint, wlc_msg, creators_id
-from src.utils import is_start, read_info, write_info
+from src.utils import is_start, read_info, write_info, index_finder
 
 info = read_info()
 
 is_kicked = False
+
 
 # server stuffs
 def init_and_start_bot():
@@ -193,21 +194,68 @@ def init_and_start_bot():
 
     # -----------------------------------------------------------------------------
 
-    # mute the groups at 9:30 PM Teh
-    def schedule_mute():
-        for group in info:
-            if is_start(info, group['chat_id']):
-                bot.set_chat_permissions(group['chat_id'], ChatPermissions(can_send_messages=False))
-                bot.send_message(group['chat_id'], 'Group Will Be Muted Till 8:30 AM')
+    @bot.message_handler(commands=['schedule_mute'])
+    def schedule_mute(message):
+        if is_start(info, message.chat.id):
+            text = message.text
+            time_data = text.split('\n')[1]
+            msg_data = text.split('\n')[2]
+            print(time_data)
+            print(msg_data)
+
+            group_index = index_finder(info, message.chat.id)
+
+            info[group_index]['schedule_mute'] = {'time': time_data, 'msg': msg_data}
+
+            write_info(info)
+
+            for instance in info:
+                schedule.every().day.at(instance['schedule_mute']['time']).do(schedule_mute,
+                                                                              msg=instance['schedule_mute']['msg'],
+                                                                              chat_id=message.chat.id)
+        else:
+            bot.send_message(message.chat.id, 'Please Start The Bot First')
 
     # ----------------------------------------------------------------------
 
-    # mute the groups at 8:30 AM Teh
-    def schedule_un_mute():
-        for group in info:
-            if is_start(info, group['chat_id']):
-                bot.set_chat_permissions(group['chat_id'], ChatPermissions(can_send_messages=True))
-                bot.send_message(group['chat_id'], 'Group Will Be Opened Till 9:30 PM')
+    def schedule_mute(msg, chat_id):
+        if is_start(info, chat_id):
+            bot.set_chat_permissions(chat_id, ChatPermissions(can_send_messages=False))
+            bot.send_message(chat_id, msg)
+
+    # ----------------------------------------------------------------------
+
+    @bot.message_handler(commands=['schedule_un_mute'])
+    def schedule_un_mute(message):
+        if is_start(info, message.chat.id):
+            text = message.text
+            time_data = text.split('\n')[1]
+            msg_data = text.split('\n')[2]
+            print(time_data)
+            print(msg_data)
+
+            group_index = index_finder(info, message.chat.id)
+
+            info[group_index]['schedule_un_mute'] = {'time': time_data, 'msg': msg_data}
+
+            write_info(info)
+
+            for instance in info:
+                print(instance['schedule_un_mute']['time'])
+                print(instance['schedule_un_mute']['msg'])
+                schedule.every().day.at(instance['schedule_un_mute']['time']).do(schedule_un_mute,
+                                                                                 msg=instance['schedule_un_mute'][
+                                                                                     'msg'],
+                                                                                 chat_id=message.chat.id)
+        else:
+            bot.send_message(message.chat.id, 'Please Start The Bot First')
+
+    # ----------------------------------------------------------------------
+
+    def schedule_un_mute(msg, chat_id):
+        if is_start(info, chat_id):
+            bot.set_chat_permissions(chat_id, ChatPermissions(can_send_messages=True))
+            bot.send_message(chat_id, msg)
 
     # ----------------------------------------------------------------------
 
@@ -216,8 +264,6 @@ def init_and_start_bot():
             schedule.run_pending()
             sleep(1)
 
-    schedule.every().day.at("18:00").do(schedule_mute)
-    schedule.every().day.at("05:00").do(schedule_un_mute)
     Thread(target=schedule_checker).start()
 
     # ----------------------------------------------------------------------

@@ -1,1 +1,1 @@
-[]
+[{'chat_title': 'test3', 'chat_id': -354375615, 'start': True}, {'chat_title': 'بیببلل', 'chat_id': -1001402501488, 'start': True}, {'chat_title': 'دانشکده زیست', 'chat_id': -1001250609143, 'start': True}]

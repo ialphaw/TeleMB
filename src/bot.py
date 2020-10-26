@@ -244,12 +244,13 @@ def init_and_start_bot():
             write_info(info)
 
             for instance in info:
-                print(instance['schedule_un_mute']['time'])
-                print(instance['schedule_un_mute']['msg'])
-                schedule.every().day.at(instance['schedule_un_mute']['time']).do(sumute,
-                                                                                 msg=instance['schedule_un_mute'][
-                                                                                     'msg'],
-                                                                                 chat_id=message.chat.id)
+                try:
+                    schedule.every().day.at(instance['schedule_un_mute']['time']).do(sumute,
+                                                                                     msg=instance['schedule_un_mute'][
+                                                                                         'msg'],
+                                                                                     chat_id=message.chat.id)
+                except:
+                    pass
         else:
             bot.send_message(message.chat.id, 'Please Start The Bot First')
 

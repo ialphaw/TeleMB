@@ -210,9 +210,12 @@ def init_and_start_bot():
             write_info(info)
 
             for instance in info:
-                schedule.every().day.at(instance['schedule_mute']['time']).do(smute,
+                try:
+                    schedule.every().day.at(instance['schedule_mute']['time']).do(smute,
                                                                               msg=instance['schedule_mute']['msg'],
                                                                               chat_id=message.chat.id)
+                except:
+                    pass
         else:
             bot.send_message(message.chat.id, 'Please Start The Bot First')
 

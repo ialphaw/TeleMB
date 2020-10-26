@@ -210,7 +210,7 @@ def init_and_start_bot():
             write_info(info)
 
             for instance in info:
-                schedule.every().day.at(instance['schedule_mute']['time']).do(schedule_mute,
+                schedule.every().day.at(instance['schedule_mute']['time']).do(smute,
                                                                               msg=instance['schedule_mute']['msg'],
                                                                               chat_id=message.chat.id)
         else:
@@ -218,7 +218,7 @@ def init_and_start_bot():
 
     # ----------------------------------------------------------------------
 
-    def schedule_mute(msg, chat_id):
+    def smute(msg, chat_id):
         if is_start(info, chat_id):
             bot.set_chat_permissions(chat_id, ChatPermissions(can_send_messages=False))
             bot.send_message(chat_id, msg)
@@ -243,7 +243,7 @@ def init_and_start_bot():
             for instance in info:
                 print(instance['schedule_un_mute']['time'])
                 print(instance['schedule_un_mute']['msg'])
-                schedule.every().day.at(instance['schedule_un_mute']['time']).do(schedule_un_mute,
+                schedule.every().day.at(instance['schedule_un_mute']['time']).do(sumute,
                                                                                  msg=instance['schedule_un_mute'][
                                                                                      'msg'],
                                                                                  chat_id=message.chat.id)
@@ -252,7 +252,7 @@ def init_and_start_bot():
 
     # ----------------------------------------------------------------------
 
-    def schedule_un_mute(msg, chat_id):
+    def sumute(msg, chat_id):
         if is_start(info, chat_id):
             bot.set_chat_permissions(chat_id, ChatPermissions(can_send_messages=True))
             bot.send_message(chat_id, msg)

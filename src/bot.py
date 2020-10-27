@@ -51,6 +51,7 @@ def init_and_start_bot():
                 info.append({'chat_title': message.chat.title})
                 info[-1]['chat_id'] = message.chat.id
                 info[-1]['start'] = True
+                info[-1]['links'] = True
                 write_info(info)
                 bot.send_message(message.chat.id, "The Bot Is Online")
             else:
@@ -67,14 +68,61 @@ def init_and_start_bot():
                "}|www\.[a-zA-Z0-9]+\.[^\s]{2,})")
     def handle_message(message):
         if is_start(info, message.chat.id):
+            group_index = index_finder(info, message.chat.id)
+            
+            if not info[group_index]['links']:
+                f = False
+                admins = bot.get_chat_administrators(message.chat.id)
+                for admin in admins:
+                    if admin.user.id == message.from_user.id:
+                        f = True
+
+                if not f:
+                    bot.delete_message(message.chat.id, message.message_id)
+        else:
+            bot.send_message(message.chat.id, 'Please Start The Bot First')
+
+    # -----------------------------------------------------------------------------
+
+    # give permission for deleting links
+    @bot.message_handler(commands=['no_links'])
+    def no_links(message):
+        if is_start(info, message.chat.id):
+            group_index = index_finder(info, message.chat.id)
+
             f = False
             admins = bot.get_chat_administrators(message.chat.id)
             for admin in admins:
                 if admin.user.id == message.from_user.id:
                     f = True
 
-            if not f:
-                bot.delete_message(message.chat.id, message.message_id)
+            if f:
+                info[group_index]['links']: False
+                bot.send_message(message.chat.id, 'Link Are Not Allow In This Group')
+            else:
+                bot.reply_to(message, "Sorry, But You're Not Admin!")
+        else:
+            bot.send_message(message.chat.id, 'Please Start The Bot First')
+
+    # -----------------------------------------------------------------------------
+
+    # give permission for allowing links
+    @bot.message_handler(commands=['allow_links'])
+    def allow_links(message):
+        if is_start(info, message.chat.id):
+            group_index = index_finder(info, message.chat.id)
+
+            f = False
+            admins = bot.get_chat_administrators(message.chat.id)
+            for admin in admins:
+                if admin.user.id == message.from_user.id:
+                    f = True
+
+            if f:
+                info[group_index]['links']: True
+                bot.send_message(message.chat.id, 'Link Are Allowed In This Group')
+            else:
+                bot.reply_to(message, "Sorry, But You're Not Admin!")
         else:
             bot.send_message(message.chat.id, 'Please Start The Bot First')
 

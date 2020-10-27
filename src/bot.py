@@ -69,7 +69,7 @@ def init_and_start_bot():
     def handle_message(message):
         if is_start(info, message.chat.id):
             group_index = index_finder(info, message.chat.id)
-            
+
             if not info[group_index]['links']:
                 f = False
                 admins = bot.get_chat_administrators(message.chat.id)
@@ -97,6 +97,7 @@ def init_and_start_bot():
                     f = True
 
             if f:
+                print('in if')
                 info[group_index]['links']: False
                 bot.send_message(message.chat.id, 'Link Are Not Allow In This Group')
             else:

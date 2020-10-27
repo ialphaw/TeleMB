@@ -97,7 +97,7 @@ def init_and_start_bot():
                     f = True
 
             if f:
-                info[group_index]['links']: False
+                info[group_index]['links'] = False
                 print(info[group_index]['links'])
                 bot.send_message(message.chat.id, 'Link Are Not Allow In This Group')
             else:
@@ -120,7 +120,7 @@ def init_and_start_bot():
                     f = True
 
             if f:
-                info[group_index]['links']: True
+                info[group_index]['links'] = True
                 bot.send_message(message.chat.id, 'Link Are Allowed In This Group')
             else:
                 bot.reply_to(message, "Sorry, But You're Not Admin!")

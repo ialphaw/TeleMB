@@ -76,8 +76,10 @@ def init_and_start_bot():
                 for admin in admins:
                     if admin.user.id == message.from_user.id:
                         f = True
+                print('salam 1')
 
                 if not f:
+                    print('salam 2')
                     bot.delete_message(message.chat.id, message.message_id)
         else:
             bot.send_message(message.chat.id, 'Please Start The Bot First')

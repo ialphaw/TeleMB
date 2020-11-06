@@ -258,7 +258,6 @@ def init_and_start_bot():
             try:
                 pm_sched = info[group_index]['schedule_mute']['pm_sched']
                 schedule.cancel_job(pm_sched)
-                print('in try eim')
             except:
                 pass
 
@@ -303,7 +302,6 @@ def init_and_start_bot():
             try:
                 pu_sched = info[group_index]['schedule_mute']['pu_sched']
                 schedule.cancel_job(pu_sched)
-                print('in try eim')
             except:
                 pass
 

@@ -8,7 +8,7 @@ from flask import Flask, request
 from telegram import ChatPermissions
 
 from src.config import TOKEN, endpoint, wlc_msg, creators_id
-from src.utils import is_start, read_info, write_info, index_finder
+from src.utils import is_start, read_info, write_info, index_finder, time_convert
 
 info = read_info()
 
@@ -248,7 +248,7 @@ def init_and_start_bot():
     def schedule_mute(message):
         if is_start(info, message.chat.id):
             text = message.text
-            time_data = text.split('\n')[1]
+            time_data = time_convert(text.split('\n')[1])
             msg_data = text.split('\n')[2]
             print(time_data)
             print(msg_data)
@@ -292,7 +292,7 @@ def init_and_start_bot():
     def schedule_un_mute(message):
         if is_start(info, message.chat.id):
             text = message.text
-            time_data = text.split('\n')[1]
+            time_data = time_convert(text.split('\n')[1])
             msg_data = text.split('\n')[2]
             print(time_data)
             print(msg_data)

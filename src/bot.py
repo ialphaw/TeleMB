@@ -18,19 +18,20 @@ is_kicked = False
 # server stuffs
 def init_and_start_bot():
     bot = telebot.TeleBot(TOKEN, threaded=False)
-    server = Flask(__name__)
-    users = {}
-
-    @server.route('/' + TOKEN, methods=['POST'])
-    def get_message():
-        bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-        return "!", 200
-
-    @server.route("/")
-    def webhook():
-        bot.remove_webhook()
-        bot.set_webhook(url=endpoint + TOKEN)
-        return "!", 200
+    bot.delete_webhook()
+    # server = Flask(__name__)
+    # users = {}
+    #
+    # @server.route('/' + TOKEN, methods=['POST'])
+    # def get_message():
+    #     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    #     return "!", 200
+    #
+    # @server.route("/")
+    # def webhook():
+    #     bot.remove_webhook()
+    #     bot.set_webhook(url=endpoint + TOKEN)
+    #     return "!", 200
 
     # -----------------------------------------------------------------------------
 
@@ -247,35 +248,38 @@ def init_and_start_bot():
     @bot.message_handler(commands=['schedule_mute'])
     def schedule_mute(message):
         if is_start(info, message.chat.id):
-            text = message.text
-            time_data = time_convert(text.split('\n')[1])
-            msg_data = text.split('\n')[2]
-            print(time_data)
-            print(msg_data)
-
-            group_index = index_finder(info, message.chat.id)
-
             try:
-                pm_sched = info[group_index]['schedule_mute']['pm_sched']
-                schedule.cancel_job(pm_sched)
-            except:
-                pass
+                text = message.text
+                time_data = time_convert(text.split('\n')[1])
+                msg_data = text.split('\n')[2]
+                print(time_data)
+                print(msg_data)
 
-            info[group_index]['schedule_mute'] = {'time': time_data, 'msg': msg_data}
+                group_index = index_finder(info, message.chat.id)
 
-            write_info(info)
-
-            for instance in info:
                 try:
-                    pm_sched = schedule.every().day.at(instance['schedule_mute']['time']).do(smute,
-                                                                                             msg=
-                                                                                             instance['schedule_mute'][
-                                                                                                 'msg'],
-                                                                                             chat_id=message.chat.id)
+                    pm_sched = info[group_index]['schedule_mute']['pm_sched']
+                    schedule.cancel_job(pm_sched)
                 except:
                     pass
-            info[group_index]['schedule_mute']['pm_sched'] = pm_sched
-            write_info(info)
+
+                info[group_index]['schedule_mute'] = {'time': time_data, 'msg': msg_data}
+
+                write_info(info)
+
+                for instance in info:
+                    try:
+                        pm_sched = schedule.every().day.at(instance['schedule_mute']['time']).do(smute,
+                                                                                                 msg=
+                                                                                                 instance['schedule_mute'][
+                                                                                                     'msg'],
+                                                                                                 chat_id=message.chat.id)
+                    except:
+                        pass
+                info[group_index]['schedule_mute']['pm_sched'] = pm_sched
+                write_info(info)
+            except:
+                bot.reply_to(message, "Something Went Wrong")
         else:
             bot.send_message(message.chat.id, 'Please Start The Bot First')
 
@@ -287,39 +291,42 @@ def init_and_start_bot():
             bot.send_message(chat_id, msg)
 
     # ----------------------------------------------------------------------
-
+    
     @bot.message_handler(commands=['schedule_un_mute'])
     def schedule_un_mute(message):
         if is_start(info, message.chat.id):
-            text = message.text
-            time_data = time_convert(text.split('\n')[1])
-            msg_data = text.split('\n')[2]
-            print(time_data)
-            print(msg_data)
-
-            group_index = index_finder(info, message.chat.id)
-
             try:
-                pu_sched = info[group_index]['schedule_mute']['pu_sched']
-                schedule.cancel_job(pu_sched)
-            except:
-                pass
+                text = message.text
+                time_data = time_convert(text.split('\n')[1])
+                msg_data = text.split('\n')[2]
+                print(time_data)
+                print(msg_data)
 
-            info[group_index]['schedule_un_mute'] = {'time': time_data, 'msg': msg_data}
+                group_index = index_finder(info, message.chat.id)
 
-            write_info(info)
-
-            for instance in info:
                 try:
-                    pu_sched = schedule.every().day.at(instance['schedule_un_mute']['time']).do(sumute,
-                                                                                                msg=instance[
-                                                                                                    'schedule_un_mute'][
-                                                                                                    'msg'],
-                                                                                                chat_id=message.chat.id)
+                    pu_sched = info[group_index]['schedule_mute']['pu_sched']
+                    schedule.cancel_job(pu_sched)
                 except:
                     pass
-            info[group_index]['schedule_mute']['pu_sched'] = pu_sched
-            write_info(info)
+
+                info[group_index]['schedule_un_mute'] = {'time': time_data, 'msg': msg_data}
+
+                write_info(info)
+
+                for instance in info:
+                    try:
+                        pu_sched = schedule.every().day.at(instance['schedule_un_mute']['time']).do(sumute,
+                                                                                                    msg=instance[
+                                                                                                        'schedule_un_mute'][
+                                                                                                        'msg'],
+                                                                                                    chat_id=message.chat.id)
+                    except:
+                        pass
+                info[group_index]['schedule_mute']['pu_sched'] = pu_sched
+                write_info(info)
+            except:
+                bot.reply_to(message, "Something Went Wrong")
         else:
             bot.send_message(message.chat.id, 'Please Start The Bot First')
 
@@ -342,4 +349,5 @@ def init_and_start_bot():
 
     # ----------------------------------------------------------------------
 
-    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+    # server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+    bot.polling()

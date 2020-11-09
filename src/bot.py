@@ -1,13 +1,11 @@
-import os
 from threading import Thread
 from time import sleep
 
 import schedule
 import telebot
-from flask import Flask, request
 from telegram import ChatPermissions
 
-from src.config import TOKEN, endpoint, wlc_msg, creators_id
+from src.config import TOKEN, wlc_msg, creators_id
 from src.utils import is_start, read_info, write_info, index_finder, time_convert
 
 info = read_info()
@@ -283,38 +281,49 @@ def init_and_start_bot():
     def schedule_mute(message):
         try:
             if is_start(info, message.chat.id):
-                try:
-                    text = message.text
-                    time_data = time_convert(text.split('\n')[1])
-                    msg_data = text.split('\n')[2]
-                    print(time_data)
-                    print(msg_data)
 
-                    group_index = index_finder(info, message.chat.id)
+                f = False
+                admins = bot.get_chat_administrators(message.chat.id)
+                for admin in admins:
+                    if admin.user.id == message.from_user.id:
+                        f = True
 
+                if f:
                     try:
-                        pm_sched = info[group_index]['schedule_mute']['pm_sched']
-                        schedule.cancel_job(pm_sched)
-                    except:
-                        pass
+                        text = message.text
+                        time_data = time_convert(text.split('\n')[1])
+                        msg_data = text.split('\n')[2]
+                        print(time_data)
+                        print(msg_data)
 
-                    info[group_index]['schedule_mute'] = {'time': time_data, 'msg': msg_data}
+                        group_index = index_finder(info, message.chat.id)
 
-                    write_info(info)
-
-                    for instance in info:
                         try:
-                            pm_sched = schedule.every().day.at(instance['schedule_mute']['time']).do(smute,
-                                                                                                     msg=
-                                                                                                     instance['schedule_mute'][
-                                                                                                         'msg'],
-                                                                                                     chat_id=message.chat.id)
+                            pm_sched = info[group_index]['schedule_mute']['pm_sched']
+                            schedule.cancel_job(pm_sched)
                         except:
                             pass
-                    info[group_index]['schedule_mute']['pm_sched'] = pm_sched
-                    write_info(info)
-                except:
-                    bot.reply_to(message, "Something Went Wrong")
+
+                        info[group_index]['schedule_mute'] = {'time': time_data, 'msg': msg_data}
+
+                        write_info(info)
+
+                        for instance in info:
+                            try:
+                                pm_sched = schedule.every().day.at(instance['schedule_mute']['time']).do(smute,
+                                                                                                         msg=
+                                                                                                         instance[
+                                                                                                             'schedule_mute'][
+                                                                                                             'msg'],
+                                                                                                         chat_id=message.chat.id)
+                            except:
+                                pass
+                        info[group_index]['schedule_mute']['pm_sched'] = pm_sched
+                        write_info(info)
+                    except:
+                        bot.reply_to(message, "Something Went Wrong")
+                else:
+                    bot.reply_to(message, "Sorry, But You're Not Admin!")
             else:
                 bot.send_message(message.chat.id, 'Please Start The Bot First')
         except:
@@ -336,38 +345,49 @@ def init_and_start_bot():
     def schedule_un_mute(message):
         try:
             if is_start(info, message.chat.id):
-                try:
-                    text = message.text
-                    time_data = time_convert(text.split('\n')[1])
-                    msg_data = text.split('\n')[2]
-                    print(time_data)
-                    print(msg_data)
 
-                    group_index = index_finder(info, message.chat.id)
+                f = False
+                admins = bot.get_chat_administrators(message.chat.id)
+                for admin in admins:
+                    if admin.user.id == message.from_user.id:
+                        f = True
 
+                if f:
                     try:
-                        pu_sched = info[group_index]['schedule_mute']['pu_sched']
-                        schedule.cancel_job(pu_sched)
-                    except:
-                        pass
+                        text = message.text
+                        time_data = time_convert(text.split('\n')[1])
+                        msg_data = text.split('\n')[2]
+                        print(time_data)
+                        print(msg_data)
 
-                    info[group_index]['schedule_un_mute'] = {'time': time_data, 'msg': msg_data}
+                        group_index = index_finder(info, message.chat.id)
 
-                    write_info(info)
-
-                    for instance in info:
                         try:
-                            pu_sched = schedule.every().day.at(instance['schedule_un_mute']['time']).do(sumute,
-                                                                                                        msg=instance[
-                                                                                                            'schedule_un_mute'][
-                                                                                                            'msg'],
-                                                                                                        chat_id=message.chat.id)
+                            pu_sched = info[group_index]['schedule_mute']['pu_sched']
+                            schedule.cancel_job(pu_sched)
                         except:
                             pass
-                    info[group_index]['schedule_mute']['pu_sched'] = pu_sched
-                    write_info(info)
-                except:
-                    bot.reply_to(message, "Something Went Wrong")
+
+                        info[group_index]['schedule_un_mute'] = {'time': time_data, 'msg': msg_data}
+
+                        write_info(info)
+
+                        for instance in info:
+                            try:
+                                pu_sched = schedule.every().day.at(instance['schedule_un_mute']['time']).do(sumute,
+                                                                                                            msg=
+                                                                                                            instance[
+                                                                                                                'schedule_un_mute'][
+                                                                                                                'msg'],
+                                                                                                            chat_id=message.chat.id)
+                            except:
+                                pass
+                        info[group_index]['schedule_mute']['pu_sched'] = f'{pu_sched}'
+                        write_info(info)
+                    except:
+                        bot.reply_to(message, "Something Went Wrong")
+                else:
+                    bot.reply_to(message, "Sorry, But You're Not Admin!")
             else:
                 bot.send_message(message.chat.id, 'Please Start The Bot First')
         except:

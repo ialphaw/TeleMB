@@ -39,10 +39,16 @@ def time_convert(time_string):
         second = "00"
     hour -= 8
     minute -= 30
-    if hour > 24:
+
+    if minute < 30:
+        hour -= 1
+
+    if hour < 0:
         hour += 24
-    if minute > 60:
+    if minute < 0:
         minute += 60
+
+
 
     def sTurn(variable):
         if variable < 10:

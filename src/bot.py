@@ -308,16 +308,16 @@ def init_and_start_bot():
 
                         write_info(info)
 
-                        for instance in info:
-                            try:
-                                pm_sched = schedule.every().day.at(instance['schedule_mute']['time']).do(smute,
-                                                                                                         msg=
-                                                                                                         instance[
-                                                                                                             'schedule_mute'][
-                                                                                                             'msg'],
-                                                                                                         chat_id=message.chat.id)
-                            except:
-                                pass
+                        try:
+                            pm_sched = schedule.every().day.at(info[group_index]['schedule_mute']['time']).do(smute,
+                                                                                                              msg=
+                                                                                                              info[
+                                                                                                                  group_index][
+                                                                                                                  'schedule_mute'][
+                                                                                                                  'msg'],
+                                                                                                              chat_id=message.chat.id)
+                        except:
+                            pass
                         info[group_index]['schedule_mute']['pm_sched'] = pm_sched
                         write_info(info)
                     except:
@@ -372,16 +372,15 @@ def init_and_start_bot():
 
                         write_info(info)
 
-                        for instance in info:
-                            try:
-                                pu_sched = schedule.every().day.at(instance['schedule_un_mute']['time']).do(sumute,
-                                                                                                            msg=
-                                                                                                            instance[
-                                                                                                                'schedule_un_mute'][
-                                                                                                                'msg'],
-                                                                                                            chat_id=message.chat.id)
-                            except:
-                                pass
+                        try:
+                            pu_sched = schedule.every().day.at(info[group_index]['schedule_un_mute']['time']).do(sumute,
+                                                                                                        msg=
+                                                                                                        info[group_index][
+                                                                                                            'schedule_un_mute'][
+                                                                                                            'msg'],
+                                                                                                        chat_id=message.chat.id)
+                        except:
+                            pass
                         info[group_index]['schedule_mute']['pu_sched'] = f'{pu_sched}'
                         write_info(info)
                     except:

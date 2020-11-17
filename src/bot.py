@@ -4,7 +4,7 @@ from time import sleep
 import schedule
 import telebot
 from src.config import TOKEN, wlc_msg, creators_id
-from src.utils import is_start, read_info, write_info, index_finder, time_convert
+from src.utils import is_start, read_info, write_info, index_finder, time_convert, list_string
 from telegram import ChatPermissions
 
 info = read_info()
@@ -292,7 +292,7 @@ def init_and_start_bot():
                     try:
                         text = message.text
                         time_data = time_convert(text.split('\n')[1])
-                        msg_data = text.split('\n')[2]
+                        msg_data = list_string(text.split('\n')[2:])
                         print(time_data)
                         print(msg_data)
 
@@ -356,7 +356,7 @@ def init_and_start_bot():
                     try:
                         text = message.text
                         time_data = time_convert(text.split('\n')[1])
-                        msg_data = text.split('\n')[2]
+                        msg_data = list_string(text.split('\n')[2:])
                         print(time_data)
                         print(msg_data)
 

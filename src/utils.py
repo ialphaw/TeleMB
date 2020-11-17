@@ -61,3 +61,11 @@ def time_convert(time_string):
     final = f"{fHour}:{fMinute}:{second}"
 
     return final
+
+
+def list_string(msg):
+    final = ''
+    for line in msg:
+        final += line + '\n'
+
+    return final

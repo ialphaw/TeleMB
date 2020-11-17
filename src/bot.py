@@ -3,10 +3,9 @@ from time import sleep
 
 import schedule
 import telebot
-from telegram import ChatPermissions
-
 from src.config import TOKEN, wlc_msg, creators_id
 from src.utils import is_start, read_info, write_info, index_finder, time_convert
+from telegram import ChatPermissions
 
 info = read_info()
 
@@ -17,6 +16,7 @@ is_kicked = False
 def init_and_start_bot():
     bot = telebot.TeleBot(TOKEN, threaded=False)
     bot.delete_webhook()
+
     # server = Flask(__name__)
     # users = {}
     #
@@ -67,7 +67,8 @@ def init_and_start_bot():
     @bot.message_handler(
         regexp="(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]["
                "a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,"
-               "}|www\.[a-zA-Z0-9]+\.[^\s]{2,})")
+               "}|www\.[a-zA-Z0-9]+\.[^\s]{2,}|[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|@[a-zA-Z0-9]["
+               "a-zA-Z0-9-]+[a-zA-Z0-9])")
     def handle_message(message):
         try:
             if is_start(info, message.chat.id):
@@ -226,7 +227,6 @@ def init_and_start_bot():
         except:
             pass
 
-
         # -----------------------------------------------------------------------------
 
     # kick a member by replying /kick to a message
@@ -340,7 +340,7 @@ def init_and_start_bot():
             pass
 
     # ----------------------------------------------------------------------
-    
+
     @bot.message_handler(commands=['schedule_un_mute'])
     def schedule_un_mute(message):
         try:

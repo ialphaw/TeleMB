@@ -277,6 +277,34 @@ def init_and_start_bot():
 
     # -----------------------------------------------------------------------------
 
+    @bot.message_handler(commands=['no_schedule'])
+    def no_schedule(message):
+        try:
+            if is_start(info, message.chat.id):
+                f = False
+                admins = bot.get_chat_administrators(message.chat.id)
+                for admin in admins:
+                    if admin.user.id == message.from_user.id:
+                        f = True
+
+                if f:
+                    group_index = index_finder(info, message.chat.id)
+
+                    try:
+                        pm_sched = info[group_index]['schedule_mute']['pm_sched']
+                        schedule.cancel_job(pm_sched)
+                    except:
+                        pass
+                else:
+                    bot.reply_to(message, "Sorry, But You're Not Admin!")
+
+            else:
+                bot.send_message(message.chat.id, 'Please Start The Bot First')
+        except:
+            pass
+
+    # -----------------------------------------------------------------------------
+
     @bot.message_handler(commands=['schedule_mute'])
     def schedule_mute(message):
         try:
